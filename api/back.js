@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 
 // Kết nối MongoDB
 // Kết nối MongoDB
-const MONGO_URI = 'mongodb+srv://vietnamtanphu:Abcd1234%21@cluster0.43celhn.mongodb.net/logsDB?retryWrites=true&w=majority&appName=Cluster0';
+const MONGO_URI = 'mongodb+srv://koconikdau111:3PksmTg2nWWNnQcF@cluster0.srhaqqp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose.connect(MONGO_URI, { useUnifiedTopology: true })
   .then(() => console.log('✅ Kết nối MongoDB thành công!'))
