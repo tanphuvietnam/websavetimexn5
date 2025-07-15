@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="public/styles.css">
+    <title>Machinery Issue Record</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background-color: #e6f3ff; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        header { 
+            text-align: center; 
+            margin-bottom: 10px; 
+        }
+        #logo { 
+            height: 50px; 
+            margin-bottom: -30px; /* Đẩy ảnh lên trên tiêu đề */
+            position: relative; 
+            z-index: 1; 
+        }
+        h1 { 
+            color: #28a745; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            position: relative; 
+            z-index: 0; 
+        }
+        #errorInput, #loginSection, #mainSection { 
+            border: 1px solid #ccc; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+            background-color: #fff; 
+            width: 400px; 
+            box-sizing: border-box; 
+        }
+        button { 
+            margin: 10px 0; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        #currentTime { margin-top: 20px; font-weight: bold; }
+        textarea { width: 100%; height: 80px; margin-top: 5px; }
+        input[type="time"], input[type="date"] { margin-top: 5px; }
+        .time-section { 
+            border: 1px solid #ccc; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+            background-color: #f9f9f9; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        .input-section { 
+            border: 1px solid #ccc; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+            background-color: #fff; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        .time-group { 
+            display: flex; 
+            gap: 15px; 
+            align-items: center; 
+            flex-wrap: wrap; 
+        }
+        .time-group > div {
+            display: flex;
+            flex-direction: column;
+        }
+        .highlight-red { color: red; font-weight: bold; }
+        label { font-weight: bold; margin-bottom: 5px; }
+        input, select, textarea { 
+            padding: 8px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+        }
+        #saveLongTimeButton { 
+            background-color: #28a745; 
+            color: white; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="/public/logo.png" alt="Nhựa Tân Phú" id="logo" onerror="this.src='https://via.placeholder.com/50'; console.log('Logo not found, using placeholder');">
+    </header>
+    <h1>Theo dõi thời gian sự cố máy</h1>
+    
+    <datalist id="listOfError">
+        <option value="Sọc màng">
+        <option value="Màng Dày + Màng Mỏng">
+        <option value="Tróc hình in">
+        <option value="Chưa xác định">
+        <option value="Đợi ống lõi">
+    </datalist>
+    
+    <div id="loginSection">
+        <label for="username">Tên đăng nhập:</label>
+        <input type="text" id="username" placeholder="Nhập tên đăng nhập">
+        <br>
+        <label for="password">Mật khẩu:</label>
+        <input type="password" id="password" placeholder="Nhập mật khẩu">
+        <br>
+        <button id="loginButton">Đăng nhập</button>
+    </div>
+    <div id="mainSection" style="display: none;">
+        <div class="input-section">
+            <label for="ca"><span class="highlight-red">B1</span> Ca:</label>
+            <select id="ca">
+                <option value="A">Ca A</option>
+                <option value="B">Ca B</option>
+                <option value="C">Ca C</option>
+                <option value="HC">Ca HC</option>
+            </select>
+            <div style="margin-top: 10px;">
+                <label for="machineName">Tên máy (VD:A1x2):</label>
+                <input type="text" id="machineName" placeholder="Nhập tên máy">
+            </div>
+        </div>
+        
+        <div class="time-section">
+            <h3><span class="highlight-red">B2</span> Thời gian sửa cô</h3>
+            
+            <div class="time-group">
+                <div>
+                    <label for="startDate">Ngày bắt đầu:</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div>
+                    <label for="startTime">Giờ bắt đầu:</label>
+                    <input type="time" id="startTime" placeholder="HH:MM">
+                </div>
+            </div>
+            
+            <div class="time-group">
+                <div>
+                    <label for="endDate">Ngày kết thúc:</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div>
+                    <label for="endTime">Giờ kết thúc:</label>
+                    <input type="time" id="endTime" placeholder="HH:MM">
+                </div>
+            </div>
+            
+            <button id="saveLongTimeButton"><span class="highlight-red">B3</span> Lưu thời gian</button>
+        </div>
+        
+        <div id="errorInput" style="display: none;">
+            <label for="errorType"><span class="highlight-red">B4</span> Loại lỗi:</label>
+            <select id="errorType">
+                <option value="">Chọn loại lỗi</option>
+                <option value="CM">CM</option>
+                <option value="HT">HT</option>
+                <option value="PM">PM</option>
+                <option value="IM">IM</option>
+                <option value="5S">5S</option>
+                <option value="COT">COT</option>
+                <option value="RM">RM</option>
+            </select>
+            
+            <label for="error"><span class="highlight-red"><br />B5</span> Tên lỗi:</label><br />
+            <input type="text" id="error" list="listOfError" placeholder="Nhập lỗi">
+            
+            <label for="supporter"><span class="highlight-red"><br />B6</span> Người hỗ trợ:</label><br />
+            <input type="text" id="supporter" placeholder="Nhập tên người hỗ trợ">
+            
+            <label for="solution"><span class="highlight-red"><br />B7</span> Hướng khắc phục:</label><br />
+            <textarea id="solution" placeholder="Nhập hướng khắc phục"></textarea>
+            
+            <button id="submitError"><span class="highlight-red">B8</span> Lưu</button>
+        </div>
+        
+        <div id="currentTime">Thời gian hiện tại: 15:13:00</div>
+        <button id="logoutButton">Đăng xuất</button>
+    </div>
+
+    <script>
+        let startDateTime, endDateTime, elapsedMinutes;
+
+        const loginSection = document.getElementById('loginSection');
+        const mainSection = document.getElementById('mainSection');
+        const loginButton = document.getElementById('loginButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const errorInput = document.getElementById('errorInput');
+        const usernameInput = document.getElementById('username');
+        const caInput = document.getElementById('ca');
+        const passwordInput = document.getElementById('password');
+        const submitErrorButton = document.getElementById('submitError');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const saveLongTimeButton = document.getElementById('saveLongTimeButton');
+        const machineNameInput = document.getElementById('machineName');
+        const solutionInput = document.getElementById('solution');
+        const errorTypeInput = document.getElementById('errorType');
+        const errorInputField = document.getElementById('error');
+        const supporterInput = document.getElementById('supporter');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+
+        const VALID_CREDENTIALS = [
+            { username: 'Phan Đình Châu', password: '1234' },
+            { username: 'Cao Văn Tuấn', password: '1234' },
+            { username: 'Đỗ Thanh Tuyền', password: '1234' },
+            { username: 'Cao Phạm Đức Long', password: '1234' },
+            { username: 'Nguyễn Văn Khiêm', password: '1234' },
+            { username: 'Ngô Văn Quang', password: '1234' },
+            { username: 'Nguyễn Anh Khoa', password: '1234' },
+        ];
+
+        function formatVietnamTime(date) {
+            const pad = (num) => String(num).padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+        }
+
+        function updateDefaults() {
+            caInput.value = 'HC';
+            const today = new Date();
+            const vietnamTime = new Date(today.getTime() + 7 * 60 * 60 * 1000);
+            const todayString = vietnamTime.toISOString().split('T')[0];
+            startDateInput.value = '2025-07-02';
+            endDateInput.value = '2025-07-02';
+            machineNameInput.value = 'A1X2';
+        }
+        updateDefaults();
+
+        function updateTime() {
+            const now = new Date();
+            const vietnamTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+            const formattedTime = vietnamTime.toISOString().slice(11, 19);
+            currentTimeDisplay.innerText = `Thời gian hiện tại: ${formattedTime}`;
+        }
+        setInterval(updateTime, 1000);
+
+        function saveState() {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('username', usernameInput.value.trim());
+            localStorage.setItem('ca', caInput.value);
+            localStorage.setItem('machineName', machineNameInput.value.trim());
+            localStorage.setItem('startDate', startDateInput.value);
+            localStorage.setItem('endDate', endDateInput.value);
+        }
+
+        function loadState() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const savedUsername = localStorage.getItem('username');
+            const savedCa = localStorage.getItem('ca');
+            const savedMachineName = localStorage.getItem('machineName');
+            const savedStartDate = localStorage.getItem('startDate');
+            const savedEndDate = localStorage.getItem('endDate');
+
+            if (isLoggedIn) {
+                loginSection.style.display = 'none';
+                mainSection.style.display = 'block';
+                usernameInput.value = savedUsername || '';
+                caInput.value = savedCa || 'HC';
+                machineNameInput.value = savedMachineName || 'A1X2';
+                startDateInput.value = savedStartDate || '2025-07-02';
+                endDateInput.value = savedEndDate || '2025-07-02';
+            }
+        }
+
+        function clearState() {
+            localStorage.clear();
+        }
+
+        loginButton.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            const validUser = VALID_CREDENTIALS.find(
+                cred => cred.username === username && cred.password === password
+            );
+            if (validUser) {
+                alert('Đăng nhập thành công!');
+                loginSection.style.display = 'none';
+                mainSection.style.display = 'block';
+                saveState();
+            } else {
+                alert('Sai tên đăng nhập hoặc mật khẩu!');
+            }
+        });
+
+        saveLongTimeButton.addEventListener('click', () => {
+            const ca = caInput.value;
+            const startDateValue = startDateInput.value;
+            const endDateValue = endDateInput.value;
+            const startTimeValue = document.getElementById('startTime').value;
+            const endTimeValue = document.getElementById('endTime').value;
+
+            if (!ca) {
+                alert('Vui lòng chọn ca.');
+                return;
+            }
+            if (!startDateValue) {
+                alert('Vui lòng chọn ngày bắt đầu.');
+                return;
+            }
+            if (!endDateValue) {
+                alert('Vui lòng chọn ngày kết thúc.');
+                return;
+            }
+            if (!startTimeValue || !endTimeValue) {
+                alert('Vui lòng nhập cả giờ bắt đầu và giờ kết thúc.');
+                return;
+            }
+
+            const [startHour, startMin] = startTimeValue.split(':').map(Number);
+            const [endHour, endMin] = endTimeValue.split(':').map(Number);
+            
+            startDateTime = new Date(startDateValue);
+            startDateTime.setHours(startHour, startMin, 0, 0);
+            
+            endDateTime = new Date(endDateValue);
+            endDateTime.setHours(endHour, endMin, 0, 0);
+
+            const diffMs = endDateTime - startDateTime;
+            if (diffMs <= 0) {
+                alert('Thời gian kết thúc phải sau thời gian bắt đầu.');
+                return;
+            }
+
+            elapsedMinutes = diffMs / (1000 * 60);
+            const hours = Math.floor(elapsedMinutes / 60);
+            const minutes = Math.floor(elapsedMinutes % 60);
+            alert(`Thời gian lỗi: ${hours} giờ ${minutes} phút (${elapsedMinutes} phút)`);
+            
+            errorInput.style.display = 'block';
+            saveState();
+        });
+
+        logoutButton.addEventListener('click', () => {
+            clearState();
+            mainSection.style.display = 'none';
+            loginSection.style.display = 'block';
+        });
+
+        submitErrorButton.addEventListener('click', async () => {
+            submitErrorButton.disabled = true;
+            const errorType = errorTypeInput.value;
+            const errorName = errorInputField.value.trim();
+            const machineName = machineNameInput.value.trim();
+            const solution = solutionInput.value.trim();
+            const supporter = supporterInput.value.trim();
+
+            if (!errorType) {
+                alert('Vui lòng chọn loại lỗi.');
+                submitErrorButton.disabled = false;
+                return;
+            }
+            if (!errorName) {
+                alert('Vui lòng nhập tên lỗi.');
+                submitErrorButton.disabled = false;
+                return;
+            }
+            if (!machineName) {
+                alert('Vui lòng nhập tên máy.');
+                submitErrorButton.disabled = false;
+                return;
+            }
+            if (!supporter) {
+                alert('Vui lòng nhập người hỗ trợ.');
+                submitErrorButton.disabled = false;
+                return;
+            }
+            if (!solution) {
+                alert('Vui lòng nhập hướng khắc phục.');
+                submitErrorButton.disabled = false;
+                return;
+            }
+            if (!elapsedMinutes) {
+                alert('Vui lòng lưu thời gian lỗi trước khi lưu lỗi.');
+                submitErrorButton.disabled = false;
+                return;
+            }
+
+            const data = {
+                username: usernameInput.value,
+                ca: caInput.value,
+                machineName: machineName,
+                startTime: formatVietnamTime(startDateTime),
+                endTime: formatVietnamTime(endDateTime),
+                error: errorName,
+                errorDuration: elapsedMinutes,
+                solution: solution,
+                errorType: errorType,
+                supporter: supporter
+            };
+
+            try {
+                const response = await fetch('https://websavetime.onrender.com/api/back', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) {
+                    alert('Lưu dữ liệu thành công.');
+                    errorInput.style.display = 'none';
+                    machineNameInput.value = machineName;
+                    document.getElementById('startTime').value = '';
+                    document.getElementById('endTime').value = '';
+                    solutionInput.value = '';
+                    errorTypeInput.value = '';
+                    errorInputField.value = '';
+                    supporterInput.value = '';
+                    elapsedMinutes = null;
+                } else {
+                    alert('Đã xảy ra lỗi khi lưu.');
+                }
+            } catch (error) {
+                alert('Lỗi kết nối hoặc máy chủ.');
+            } finally {
+                submitErrorButton.disabled = false;
+            }
+        });
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loginButton.click();
+            }
+        });
+
+        loadState();
+    </script>
+</body>
+</html>
