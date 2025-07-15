@@ -2,16 +2,15 @@
   "name": "vercel-deploy-websavetime-main",
   "lockfileVersion": 3,
   "requires": true,
-  "packages": {
-    "": {
-      "dependencies": {
-        "cors": "^2.8.5",
-        "express": "^4.21.2",
-        "mongoose": "^8.9.0",
-        "mssql": "^11.0.1",
-        "mysql": "^2.18.1",
-        "sqlite3": "^5.1.7"
-      }
-    }
+  "scripts": {
+    "start": "node src/back.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.0",
+    "mssql": "^11.0.1",
+    "mysql": "^2.18.1",
+    "sqlite3": "^5.1.7"
   }
 }
